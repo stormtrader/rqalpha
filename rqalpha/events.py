@@ -135,10 +135,18 @@ class EVENT(Enum):
     ORDER_UNSOLICITED_UPDATE = 'order_unsolicited_update'
 
     # 成交
-    # trade(accout, trade)
+    # trade(accout, trade, order)
     TRADE = 'trade'
 
     ON_LINE_PROFILER_RESULT = 'on_line_profiler_result'
+
+    # persist immediantly
+    DO_PERSIST = 'do_persist'
+
+    # 策略被暂停
+    STRATEGY_HOLD_SET = 'strategy_hold_set'
+    # 策略被恢复
+    STRATEGY_HOLD_CANCELLED = 'strategy_hold_canceled'
 
 
 def parse_event(event_str):

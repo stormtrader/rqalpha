@@ -2,6 +2,367 @@
 CHANGELOG
 ==================
 
+3.0.9
+==================
+
+- 限制 pandas 的版本为 0.18 ~ 0.20 ，因为 0.21 和 matplotlib 有些不兼容。
+3.0.8
+==================
+
+- 修复 :code:`rqalpha run --config` 参数
+- 增加 ON_NORMAL_EXIT 的持久化模式，在 RQAlpha 成功运行完毕后进行 persist 。可以在盘后快速地根据昨日持久化数据继续运行回测来增量回测。
+- 增加 :code:`rqalpha run --logger` 参数可以单独设置特定的 logger 的 level
+- 增加 persist_provider 的检查
+- 修复 :code:`get_prev_close`
+- 打印 mod 的启动状态信息，方便 debug
+- 增加 :code:`is_valid_price` 工具函数来判断价格是否有效
+- 修复期货账户因为保证金变化导致total_value计算错误
+- 重构股票账户:code:`last_price`更新
+- 修复期货下单拒单是错误信息typo
+- 当启动LIVE_TRADING模式的时候，跳过simulation_mod的初始化
+- 增加 :code:`rqalpha run --position` 来设置初始仓位的功能
+-
+
+3.0.6
+==================
+
+- import 修改相对引用为绝对引用
+- 重构配置文件读取功能，分为默认配置，用户配置，项目配置
+- 重构 `main()` 的 `tear_down` 的调用
+- get_previous_trading_date(date, n=1) 增加参数 n
+- 增加公募基金数据处理相关逻辑
+- 修改 `mod.tear_down` ，如果单个 mod 在 tear_down 抛异常后，不影响其他 mod 继续 tear_down
+- scheduler bugfix
+- 处理 persist 遇到的异常
+- 修复 order get_state / set_state 缺失 transaction_cost, avg_price
+- 修复 mod_sys_stock_realtime
+
+3.0.2
+==================
+
+- 取消在股票下单函数中对 `order_book_id` 类型的检查，现在您可以交易 `ETF`, `LOF`, `FenjiMu`, `FenjiA`, `FenjiB`, `INDX` 了
+- Merge `PR 170 <https://github.com/ricequant/rqalpha/pull/170>`_ 解决自定义 `volume limit` 时显示数值不正确的问题。
+- Fix `Issue 148 <https://github.com/ricequant/rqalpha/issues/148>`_ `get_dividend()方法返回的类型是numpy.ndarray，而非pandas.DataFrame`
+- Fix `Issue 169 <https://github.com/ricequant/rqalpha/issues/169>`_ 执行 `rqalpha mod install ctp==0.2.0dev0` 时错误的记录了库信息的问题
+- Fix `Issue 158 <https://github.com/ricequant/rqalpha/issues/158>`_ 多次循环 `run_file` / `run_code` 时导致的内存泄漏的问题
+- Enhance `Issue 166 <https://github.com/ricequant/rqalpha/issues/166>`_ 启动参数支持 `--no-stock-t1` 来屏蔽股票 T + 1 导致今仓的限制
+- 性能提升: 使用 `bisect_right` 代替 `searchsorted`
+
+3.0.0
+==================
+
+**[For 开发/运行策略的用户]**
+
+3.x 相比 2.x 进行了如下更改，如果您升级到 3.x 版本，请务必阅读以下内容，保证您的策略可以顺利启动和执行:
+
+- 命令行参数做出如下调整
+
+  - 不再使用 :code:`-sc/--stock-starting-cash` 参数
+  - 不再使用 :code:`-fc/--future-starting-cash` 参数
+  - 不再使用 :code:`-i/--init-cash` 参数
+  - 不再使用 :code:`-s/--security` 参数
+  - 不再使用 :code:`-k/--kind` 参数
+  - 不再使用 :code:`--strategy-type` 参数
+  - **使用** :code:`--account` 来替代，具体用法如下
+
+.. code-block:: bash
+
+  # 策略通过命令行运行，设置可交易类型是股票，起始资金为 10000
+  $ rqalpha run --account stock 10000
+  # 策略通过命令行运行，设置可交易类型为期货，起始资金为 50000
+  $ rqalpha run --account future 50000
+  # 策略通过命令行运行，设置可交易类型为期货和股票，起始资金分别为 股票 10000, 期货 50000
+  $ rqalpha run --account stock 10000 --account future 50000
+  # 如果您通过 Mod 扩展，自定义了一种可交易类型(假设是huobi)，您也可以增加对于火币的支持和起始资金设置
+  $ rqalpha run --account stock 10000 --account future 50000 --account huobi 20000
+
+- 相应，如果您通过 :code:`run_file | run_code | run_func` 来启动策略，配置文件及配置信息也做了对应的调整:
+
+  - 不再使用 :code:`base.stock_starting_cash`
+  - 不再使用 :code:`base.future_starting_cash`
+  - 不再使用 :code:`base.securities`
+  - **使用** :code:`base.accounts` 来替代，具体用法如下:
+
+.. code-block:: python
+
+  # 策略通过配置，设置可交易类型是股票，起始资金为 10000
+  config = {
+    "base": {
+      "start_date": "...",
+      "end_date": "...",
+      "frequency": "...",
+      "matching_type": "...",
+      "benchmark": "...",
+      "accounts": {
+        "stock": 10000
+      }
+    }
+  }
+  # 策略通过配置，设置可交易类型是期货，起始资金为 50000
+  config = {
+    "base": {
+      "start_date": "...",
+      "end_date": "...",
+      "frequency": "...",
+      "matching_type": "...",
+      "benchmark": "...",
+      "accounts": {
+        "future": 50000
+      }
+    }
+  }
+  # 策略通过配置，设置可交易类型为期货和股票，起始资金分别为 股票 10000, 期货 50000
+  config = {
+    "base": {
+      "start_date": "...",
+      "end_date": "...",
+      "frequency": "...",
+      "matching_type": "...",
+      "benchmark": "...",
+      "accounts": {
+        "stock": 10000,
+        "future": 50000
+      }
+    }
+  }
+  # 如果您通过 Mod 扩展，自定义了一种可交易类型(假设是huobi)，您也可以增加对于火币的支持和起始资金设置
+  config = {
+    "base": {
+      "start_date": "...",
+      "end_date": "...",
+      "frequency": "...",
+      "matching_type": "...",
+      "benchmark": "...",
+      "accounts": {
+        "stock": 10000,
+        "future": 50000,
+        "huobi": 20000
+      }
+    }
+  }
+
+
+
+**[For Mod developer]**
+
+本次更新可能导致已实现 Mod 无法正常使用，请按照文档升级您的 Mod，或者使用 2.2.x 版本 RQAlpha
+
+在通过 Mod 扩展 RQAlpha 的时候，由于 RQAlpha 直接定义了 `Account` 和 `Position` 相关的 Model, 增加新的 `account` 和 `position` 变得非常的困难，想扩展更多类型是一件很麻烦的事情，因此我们决定重构该模块从而解决这些问题。
+
+详情请查看: https://github.com/ricequant/rqalpha/issues/160
+
+主要进行如下更改:
+
+- 增加 :code:`AbstractAccount` 和 :code:`AbstractPosition`, 用户可以基于该抽象类进行扩展。
+- :code:`const.ACCOUNT_TYPE` 修改为 :code:`const.DEFAULT_ACCOUNT_TYPE`，并且不再直接使用，您可以通过 :code:`Environment.get_instance().account_type_dict` 来获取包括 Mod 注入的账户类型。
+- 原先所有使用 `ACCOUNT_TYPE` 作为 key 的地方，不再使用 Enum 类型作为 Key, 而是修改为对应 Enum 的 name 作为key。比如说原本使用 :code:`portfolio.accounts[ACCOUNT_TYPE.STOCK]` 更改为 :code:`portfolio.accounts['STOCK']`
+- :code:`Environment` 提供 :code:`set_account_model` | :code:`get_account_model` | :code:`set_position_model` | :code:`get_position_model` API 来注入 自定义Model。
+- :code:`Environment` 提供 :code:`set_smart_order` API 来注入自定义账户类型的智能下单函数，从而通过通用的 :code:`order` | :code:`order_to` API 便可以交易对应自定义账户类型。
+- RQAlpha 将已有的 AccountModel, PositionModel 和 API 抽离至 `rqalpha_mod_sys_accounts` 中，通过如下方式注入:
+
+.. code-block:: python
+
+  from .account_model import *
+  from .position_model import *
+  from .api import api_future, api_stock
+
+
+  class AccountMod(AbstractMod):
+
+      def start_up(self, env, mod_config):
+
+          # 注入 Account
+          env.set_account_model(DEFAULT_ACCOUNT_TYPE.STOCK.name, StockAccount)
+          env.set_account_model(DEFAULT_ACCOUNT_TYPE.FUTURE.name, FutureAccount)
+          env.set_account_model(DEFAULT_ACCOUNT_TYPE.BENCHMARK.name, BenchmarkAccount)
+
+          # 注入 Position
+          env.set_position_model(DEFAULT_ACCOUNT_TYPE.STOCK.name, StockPosition)
+          env.set_position_model(DEFAULT_ACCOUNT_TYPE.FUTURE.name, FuturePosition)
+          env.set_position_model(DEFAULT_ACCOUNT_TYPE.BENCHMARK.name, StockPosition)
+
+          # 注入 API
+          if DEFAULT_ACCOUNT_TYPE.FUTURE.name in env.config.base.accounts:
+              # 注入期货API
+              for export_name in api_future.__all__:
+                  export_as_api(getattr(api_future, export_name))
+              # 注入 smart order
+              env.set_smart_order(DEFAULT_ACCOUNT_TYPE.FUTURE.name, api_future.smart_order)
+          if DEFAULT_ACCOUNT_TYPE.STOCK.name in env.config.base.accounts:
+              # 注入股票API
+              for export_name in api_stock.__all__:
+                  export_as_api(getattr(api_stock, export_name))
+              # 注入 smart order
+              env.set_smart_order(DEFAULT_ACCOUNT_TYPE.STOCK.name, api_stock.smart_order)
+
+      def tear_down(self, code, exception=None):
+          pass
+
+
+2.2.7
+==================
+
+- 解决当存在无效 Mod 时，RQAlpha 崩溃无法启动的问题
+- 修复期货下单函数默认 style 为 None 导致报错退出的问题
+
+2.2.5
+==================
+
+- 增加 IPython Magic 方便在 IPython 中运行回测 `run-rqalpha-in-ipython.ipynb <https://github.com/ricequant/rqalpha/blob/master/docs/source/notebooks/run-rqalpha-in-ipython.ipynb>`_ 。运行完回测后，会将所有的 mod 的输出结果保存在 results 变量中，并且会将回测报告存储在 report 对象中。
+- 修复系统异常、用户异常的区分判断
+- 增加 :code:`--source-code` 参数可以直接在命令行中传入策略源代码进行回测，这个选项目前主要给 IPython 使用。
+- 对于 :code:`history_bars` 当 fields 为 None 的时候，指定为 ["datetime", "open", "high", "low", "close", "volume"] 。
+- 重构 rqalpha_mod_sys_funcat 的数据获取
+- 修复 order 的 set_state 的 bug
+- 优化分红计算
+- 提取 inject_mod_commands 给 click 参数注入
+
+.. code-block:: python
+
+  # 加载 rqalpha 插件
+  %load_ext rqalpha
+
+  # 运行回测
+  %% rqalpha -s 20160101 -e 20170101 -sc 100000
+
+2.2.4
+==================
+
+- 所有的下单函数进行了扩展，扩展如下:
+
+.. code-block:: python
+
+  # 以 order_shares 举例，其他的下单函数同理。
+  # 原本的下单方式: 以 200 元的价格下单 100 股 000001.XSHE
+  order_shares("000001.XSHE", 100, style=LimitOrder(200))
+  # 下单的如下方式都OK:
+  order_shares("000001.XSHE", 100, 200)
+  order_shares("000001.XSHE", 100, LimitOrder(200))
+  order_shares("000001.XSHE", 100, price=200)
+  order_shares("000001.XSHE", 100, style=LimitOrder(200))
+
+- :code:`buy_close` 和 :code:`sell_close` API 增加 :code:`close_today` 参数，现在您现在可以指定发平今单了。
+- Breaking Change: 原本期货中的 :code:`buy_close` 和 :code:`sell_close` API 返回的 :code:`Order` 对象。但实际交易过程中，涉及到昨仓今仓的时候，可能会存在发单被拒单的情况，RQAlpha 进行平昨/平今智能拆单的处理，因此在一些情况下会生成多个订单，对应也会返回一个订单列表。期货平仓更新的内容请参考 `Issue 116 <https://github.com/ricequant/rqalpha/issues/116>`_
+- Breaking Change: 取消 :code:`Order` | :code:`Trade` 对应的 :code:`__from_create__` 函数中 :code:`calendar_dt` 和 :code:`trading_dt` 的传入，对接第三方交易源，构建订单和成交的 Mod 可能会产生影响，需要进行修改.
+
+.. code-block:: python
+
+  # 原先的构建方式
+  Order.__from_create__(
+    calendar_dt,
+    trading_dt,
+    order_book_id,
+    amount,
+    side,
+    style,
+    position_effect
+  )
+  #修改为
+  Order.__from_create__(
+    order_book_id,
+    amount,
+    side,
+    style,
+    position_effect
+  )
+
+- `iPython` 更新至 6.0 版本以后不再支持 `Python 2.x` 导致在 `Python 2.x` 下安装RQAlpha 因为 `line-profiler` 依赖 `iPython` 的缘故而报错。目前增加了在 `Python 2.x` 下依赖 `iPython 5.3.0` 版本解决此问题。
+- 不再提供 `rqalpha-cmd` 命令的扩展和注入，目前只有一个 entry point: `rqalpha` 第三方 Mod 可以扩展 `rqalpha` 命令。
+- 增加 :code:`from rqalpha import subscribe_event` 来支持事件订阅(暂时不增加到API中，您如果想在策略里使用，也需要主动 import 该函数), 如下示例所示:
+
+.. code-block:: python
+
+  from rqalpha.api import *
+  from rqalpha import subscribe_event
+
+
+  def on_trade_handler(event):
+      trade = event.trade
+      order = event.order
+      account = event.account
+      logger.info("*" * 10 + "Trade Handler" + "*" * 10)
+      logger.info(trade)
+      logger.info(order)
+      logger.info(account)
+
+
+  def on_order_handler(event):
+      order = event.order
+      logger.info("*" * 10 + "Order Handler" + "*" * 10)
+      logger.info(order)
+
+
+  def init(context):
+      logger.info("init")
+      context.s1 = "000001.XSHE"
+      update_universe(context.s1)
+      context.fired = False
+      subscribe_event(EVENT.TRADE, on_trade_handler)
+      subscribe_event(EVENT.ORDER_CREATION_PASS, on_order_handler)
+
+
+  def before_trading(context):
+      pass
+
+
+  def handle_bar(context, bar_dict):
+      if not context.fired:
+          order_percent(context.s1, 1)
+          context.fired = True
+
+  # rqalpha run -f ./rqalpha/examples/subscribe_event.py -s 2016-06-01 -e 2016-12-01 --stock-starting-cash 100000 --benchmark 000300.XSHG
+
+- `sys_stock_realtime` 提供了一个行情下载服务，启动该服务，会实时往 redis 中写入全市场股票行情数据。多个 RQAlpha 可以连接该 redis 获取实时盘口数据，就不需要重复获取数据。详情参考文档 `sys stock realtime mod README <https://github.com/ricequant/rqalpha/blob/master/rqalpha/mod/rqalpha_mod_sys_stock_realtime/README.rst>`_
+- 解决期货策略持仓到交割导致可用资金计算不准确的问题
+- 解决 `--plot` 时候会报错退出的问题
+
+
+2.2.2
+==================
+
+- 增加 :code:`run_file` | :code:`run_code` | :code:`run_func` API, 详情请参见 `多种方式运行策略 <http://rqalpha.io/zh_CN/latest/intro/run_algorithm.html>`_
+- Breaking Change: 更改 :code:`AbstractStrategyLoader:load` 函数的传入参数，现在不需要 :code:`strategy` 了。
+- 增加 :code:`UserFuncStrategyLoader` 类
+- 根据 `Issue 116 <https://github.com/ricequant/rqalpha/issues/116>`_ 增加如下内容:
+
+  - :code:`POSITION_EFFECT` 增加 :code:`CLOSE_TODAY` 类型
+  - 增加调仓函数 :code:`order(order_book_id, quantity, price=None)` API
+
+    - 如果不传入 price 则认为执行的是 MarketOrder 类型订单，否则下 LimitOrder 订单
+    - 期货
+
+      - quantity > 0: 往 BUY 方向调仓 quantity 手
+      - quantity < 0: 往 SELL 方向调仓 quantity 手
+
+    - 股票
+
+      - 相当于 order_shares 函数
+
+  - 增加调仓函数 :code:`order_to(order_book_id, quantity, price=None)` API
+
+    - 基本逻辑和 :code:`order` 函数一致
+    - 区别在于 quantity 表示调仓对应的最终仓位
+
+  - 现有所有下单函数，增加 `price` option，具体行为和 :code:`order` | :code:`order_to` 一致
+
+- Fix bug in :code:`all_instruments` `PR 123 <https://github.com/ricequant/rqalpha/pull/123>`_
+- Fix "运行不满一天的情况下 sys_analyser 报 KeyError" `PR 118 <https://github.com/ricequant/rqalpha/pull/118>`_
+- sys_analyser 生成 report 对应的字段进行调整，具体调整内容请查看 commit `d9d19f <https://github.com/ricequant/rqalpha/commit/f6e4c24fde2f086cc09b45b2cc4d2cfe0cd9d19f>`_
+
+2.2.0
+==================
+
+- 增加 :code:`order` 和 :code:`order_to` 高阶下单函数
+- 更新数据源，现在使用原始数据和复权因子的方式进行回测
+- 不再使用 `ruamel.yaml` 该库在某些情况下无法正确解析 yml 配置文件
+- 解决 `six` 库依赖多次引用导致安装出错的问题
+- 解决 :code:`rqalpha run` 的时候指定 :code:`-st` | :code:`--kind` 时报错的问题
+- :code:`--security` / :code:`-st` 现在支持多种模式，可以使用 :code:`-st stock -st future` 也可以使用 :code:`-st stock_future` 来设置security
+- 更新 BarDictPriceBoard `Issue 115 <https://github.com/ricequant/rqalpha/issues/115>`_
+- 解决 :code:`print(context.portfolio)` 时因为调用了 `abandon property` 会报 warning 的问题 `Issue 114 <https://github.com/ricequant/rqalpha/issues/114>`_
+- 解决 :code:`rqalpha mod install xx` 不存在的 Mod 也会导致 mod_config.yml 更新的问题 `Issue 111 <https://github.com/ricequant/rqalpha/issues/111>`_
+- 解决 :code:`rqalpha plot` 无法画图的问题 `Issue 109 <https://github.com/ricequant/rqalpha/issues/109>`_
+
 2.1.4
 ==================
 
@@ -84,7 +445,7 @@ CHANGELOG
         "end_date": "2016-07-01",
         "stock_starting_cash":100000,
         "benchmark": '000300.XSHG'
-      },  
+      },
       "extra":{
         "context_vars":{
           "short":5,

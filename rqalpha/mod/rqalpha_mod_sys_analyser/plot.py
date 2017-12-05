@@ -48,15 +48,15 @@ def plot_result(result_dict, show_windows=True, savefile=None):
 
     title = summary['strategy_file']
 
-    total_portfolios = result_dict["total_portfolios"]
-    benchmark_portfolios = result_dict.get("benchmark_portfolios")
+    portfolio = result_dict["portfolio"]
+    benchmark_portfolio = result_dict.get("benchmark_portfolio")
 
-    index = total_portfolios.index
+    index = portfolio.index
 
     # maxdrawdown
-    portfolio_value = total_portfolios.unit_net_value * total_portfolios.units
+    portfolio_value = portfolio.unit_net_value * portfolio.units
     xs = portfolio_value.values
-    rt = total_portfolios.total_returns.values
+    rt = portfolio.unit_net_value.values
     max_dd_end = np.argmax(np.maximum.accumulate(xs) / xs)
     if max_dd_end == 0:
         max_dd_end = len(xs) - 1
@@ -149,15 +149,16 @@ def plot_result(result_dict, show_windows=True, savefile=None):
     ax.grid(b=True, which='major', linewidth=1)
 
     # plot two lines
-    ax.plot(total_portfolios["total_returns"], label=_(u"strategy"), alpha=1, linewidth=2, color=red)
-    if benchmark_portfolios is not None:
-        ax.plot(benchmark_portfolios["total_returns"], label=_(u"benchmark"), alpha=1, linewidth=2, color=blue)
+    ax.plot(portfolio["unit_net_value"] - 1.0, label=_(u"strategy"), alpha=1, linewidth=2, color=red)
+    if benchmark_portfolio is not None:
+        ax.plot(benchmark_portfolio["unit_net_value"] - 1.0, label=_(u"benchmark"), alpha=1, linewidth=2, color=blue)
 
     # plot MaxDD/MaxDDD
-    ax.plot([index[max_dd_end], index[max_dd_start]], [rt[max_dd_end], rt[max_dd_start]],
+    ax.plot([index[max_dd_end], index[max_dd_start]], [rt[max_dd_end] - 1.0, rt[max_dd_start] - 1.0],
             'v', color='Green', markersize=8, alpha=.7, label=_(u"MaxDrawdown"))
     ax.plot([index[max_ddd_start_day], index[max_ddd_end_day]],
-            [rt[max_ddd_start_day], rt[max_ddd_end_day]], 'D', color='Blue', markersize=8, alpha=.7, label=_(u"MaxDDD"))
+            [rt[max_ddd_start_day] - 1.0, rt[max_ddd_end_day] - 1.0], 'D', color='Blue', markersize=8, alpha=.7,
+            label=_(u"MaxDDD"))
 
     # place legend
     leg = plt.legend(loc="best")

@@ -8,15 +8,15 @@ RQAlpha 控制台进度条 Mod
 
 该模块是系统模块，不可删除
 
-开启或关闭策略分析 Mod
+开启或关闭进度条 Mod
 ===============================
 
 ..  code-block:: bash
 
-    # 关闭策略分析 Mod
+    # 关闭进度条 Mod
     $ rqalpha mod disable sys_progress
 
-    # 启用策略分析 Mod
+    # 启用进度条 Mod
     $ rqalpha mod enable sys_progress
 
 模块配置项
@@ -40,11 +40,12 @@ RQAlpha 控制台进度条 Mod
     config = {
         "base": {
             "strategy_file": "strategy.py",
-            "securities": ["stock"],
             "start_date": "2015-01-09",
             "end_date": "2015-03-09",
             "frequency": "1d",
-            "stock_starting_cash": 100000,
+            "accounts": {
+                "stock": 100000
+            }
         }
         "mod": {
             "sys_progress": {

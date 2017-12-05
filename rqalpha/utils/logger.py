@@ -14,13 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from datetime import datetime
 import traceback
 import logbook
 import better_exceptions
 from logbook import Logger
 from logbook.more import ColorizedStderrHandler
 
-from .py2 import to_utf8, from_utf8
+from rqalpha.utils.py2 import to_utf8, from_utf8
 
 logbook.set_datetime_format("local")
 
@@ -41,6 +42,7 @@ def format_exception(exc, value, tb):
 
     return full_trace
 
+
 better_exceptions.format_exception = format_exception
 
 
@@ -50,15 +52,15 @@ __all__ = [
 ]
 
 
-DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S.00"
+DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 
 
 def user_std_handler_log_formatter(record, handler):
-    from ..environment import Environment
+    from rqalpha.environment import Environment
     try:
         dt = Environment.get_instance().calendar_dt.strftime(DATETIME_FORMAT)
     except Exception:
-        dt = "0000-00-00"
+        dt = datetime.now().strftime(DATETIME_FORMAT)
 
     log = "{dt} {level} {msg}".format(
         dt=dt,
@@ -100,11 +102,18 @@ user_detail_log = Logger("user_detail_log")
 
 # 系统日志
 system_log = Logger("system_log")
-system_log.handlers.append(ColorizedStderrHandler(bubble=True))
+basic_system_log = Logger("basic_system_log")
 
 # 标准输出日志
 std_log = Logger("std_log")
-std_log.handlers.append(ColorizedStderrHandler(bubble=True))
+
+
+def init_logger():
+    system_log.handlers = [ColorizedStderrHandler(bubble=True)]
+    basic_system_log.handlers = [ColorizedStderrHandler(bubble=True)]
+    std_log.handlers = [ColorizedStderrHandler(bubble=True)]
+    user_log.handlers = []
+    user_system_log.handlers = []
 
 
 def user_print(*args, **kwargs):
@@ -115,3 +124,5 @@ def user_print(*args, **kwargs):
 
     user_log.info(message)
 
+
+init_logger()

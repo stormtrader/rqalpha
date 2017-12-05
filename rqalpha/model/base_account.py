@@ -15,11 +15,27 @@
 # limitations under the License.
 
 import six
-from ...utils.i18n import gettext as _
-from ...utils.logger import user_system_log
+
+from rqalpha.interface import AbstractAccount
+from rqalpha.utils.repr import property_repr
+from rqalpha.utils.i18n import gettext as _
+from rqalpha.utils.logger import user_system_log
 
 
-class BaseAccount(object):
+class BaseAccount(AbstractAccount):
+
+    __abandon_properties__ = [
+        "portfolio_value",
+        "starting_cash",
+        "daily_returns",
+        "total_returns",
+        "pnl"
+    ]
+
+    AGGRESSIVE_UPDATE_LAST_PRICE = False
+
+    __repr__ = property_repr
+
     def __init__(self, total_cash, positions, backward_trade_set=set(), register_event=True):
         self._positions = positions
         self._frozen_cash = 0

@@ -15,7 +15,7 @@
 # limitations under the License.
 
 import click
-from rqalpha.__main__ import cli
+from rqalpha import cli
 
 
 __config__ = {
@@ -54,8 +54,8 @@ cli_prefix = "mod__sys_simulation__"
 cli.commands['run'].params.append(
     click.Option(
         ('--signal', cli_prefix + "signal"),
-        is_flag=True,
-        help="[sys_simulation]exclude match engine",
+        is_flag=True, default=None,
+        help="[sys_simulation] exclude match engine",
     )
 )
 
@@ -63,7 +63,7 @@ cli.commands['run'].params.append(
     click.Option(
         ('-sp', '--slippage', cli_prefix + "slippage"),
         type=click.FLOAT,
-        help="[sys_simulation]set slippage"
+        help="[sys_simulation] set slippage"
     )
 )
 

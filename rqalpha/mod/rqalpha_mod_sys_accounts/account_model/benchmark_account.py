@@ -14,11 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import numpy as np
+from rqalpha.environment import Environment
+from rqalpha.events import EVENT
+from rqalpha.utils import is_valid_price
 
 from .stock_account import StockAccount
-from ...environment import Environment
-from ...events import EVENT
 
 
 class BenchmarkAccount(StockAccount):
@@ -28,15 +28,16 @@ class BenchmarkAccount(StockAccount):
 
     def register_event(self):
         event_bus = Environment.get_instance().event_bus
-        event_bus.add_listener(EVENT.SETTLEMENT, self._on_settlement)
-        event_bus.add_listener(EVENT.PRE_BAR, self._on_bar)
-        event_bus.add_listener(EVENT.PRE_TICK, self._on_tick)
+        event_bus.prepend_listener(EVENT.SETTLEMENT, self._on_settlement)
+        event_bus.prepend_listener(EVENT.PRE_BEFORE_TRADING, self._before_trading)
+        event_bus.prepend_listener(EVENT.PRE_BAR, self._on_bar)
+        event_bus.prepend_listener(EVENT.TICK, self._on_tick)
 
     def _on_bar(self, event):
         # run once
         if len(self._positions) == 0:
             price = event.bar_dict[self.benchmark].close
-            if np.isnan(price):
+            if not is_valid_price(price):
                 return
             position = self._positions.get_or_create(self.benchmark)
             quantity = int(self._total_cash / price)
@@ -56,9 +57,3 @@ class BenchmarkAccount(StockAccount):
             position._quantity = quantity
             position._avg_price = price
             self._total_cash -= quantity * price
-
-    def _on_settlement(self, event):
-        """
-        回测中的Benchmark 不处理退市相关的内容。如果退市则不再更新last_price
-        """
-        self._handle_dividend_book_closure(event.trading_dt.date())

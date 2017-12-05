@@ -74,7 +74,7 @@ def run_test(filename):
     }
     print(u"Start test: " + str(config["base"]["strategy_file"]))
     result_dict = run(config)['sys_analyser']
-    df = result_dict["total_portfolios"]
+    df = result_dict["portfolio"]
     # del df['positions']
 
     old_pickle_file = os.path.join(TEST_OUT, filename.replace(".py", ".pkl"))
@@ -88,7 +88,7 @@ def run_test(filename):
         old_result_dict = pd.read_pickle(old_pickle_file)
 
         # 比较 portfolios
-        old_df = old_result_dict["total_portfolios"]
+        old_df = old_result_dict["portfolio"]
         old_df = old_df.fillna(0)
         old_df = old_df.replace([np.inf, -np.inf], 0)
         df = df.fillna(0)
@@ -138,7 +138,7 @@ def is_enable_coverage():
 
 
 def test_api():
-    # FIXME Error msg is hard to understand @zjuguxi
+    # FIXME: Error msg is hard to understand @zjuguxi
     # return
 
     print(u"Testing API......")
@@ -156,7 +156,6 @@ def test_api():
         test_all_instruments_code_new,
         test_instruments_code_new,
         test_sector_code_new,
-        test_concept_code_new,
         test_industry_code_new,
         test_get_trading_dates_code_new,
         test_get_previous_trading_date_code_new,
@@ -179,13 +178,14 @@ def test_api():
 
     base_api_config = {
         "base": {
-            "securities": "stock",
             "start_date": "2016-12-01",
             "end_date": "2016-12-31",
             "frequency": "1d",
             "matching_type": "next_bar",
-            "stock_starting_cash": 1000000,
-            "strategy_file": 'rqalpha/__init__.py'
+            "strategy_file": 'rqalpha/__init__.py',
+            "accounts": {
+                "stock": 1000000
+            }
         },
         "extra": {
             "log_level": "error",
@@ -200,13 +200,14 @@ def test_api():
 
     stock_api_config = {
         "base": {
-            "securities": "stock",
             "start_date": "2016-03-07",
             "end_date": "2016-03-08",
             "frequency": "1d",
             "matching_type": "next_bar",
-            "stock_starting_cash": 100000000,
-            "strategy_file": 'rqalpha/__init__.py'
+            "strategy_file": 'rqalpha/__init__.py',
+            "accounts": {
+                "stock": 100000000
+            }
         },
         "extra": {
             "log_level": "error",
@@ -221,13 +222,14 @@ def test_api():
 
     future_api_config = {
         "base": {
-            "securities": "future",
             "start_date": "2016-03-07",
             "end_date": "2016-03-08",
             "frequency": "1d",
             "matching_type": "next_bar",
-            "future_starting_cash": 10000000000,
-            "strategy_file": 'rqalpha/__init__.py'
+            "strategy_file": 'rqalpha/__init__.py',
+            "accounts": {
+                "future": 10000000000
+            }
         },
         "extra": {
             "log_level": "error",
@@ -255,7 +257,6 @@ def test_api():
     tasks.append((base_api_config, test_instruments_code_new, "test_instruments_code_new"))
     tasks.append((base_api_config, test_sector_code_new, "test_sector_code_new"))
     tasks.append((base_api_config, test_industry_code_new, "test_industry_code_new"))
-    tasks.append((base_api_config, test_concept_code_new, "test_concept_code_new"))
     tasks.append((base_api_config, test_get_trading_dates_code_new, "test_get_trading_dates_code_new"))
     tasks.append((base_api_config, test_get_previous_trading_date_code_new, "test_get_previous_trading_date_code_new"))
     tasks.append((base_api_config, test_get_next_trading_date_code_new, "test_get_next_trading_date_code_new"))

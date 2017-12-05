@@ -2,7 +2,7 @@
 RQAlpha
 =======
 
-..  image:: https://raw.githubusercontent.com/ricequant/rqalpha/master/docs/source/_static/logo.jpg
+..  image:: https://raw.githubusercontent.com/ricequant/rq-resource/master/rqalpha/logo.jpg
 
 ..  image:: https://img.shields.io/travis/ricequant/rqalpha/master.svg
     :target: https://travis-ci.org/ricequant/rqalpha/branches
@@ -28,7 +28,9 @@ RQAlpha
     :alt: Python Version Support
 
 
-RQAlpha 从数据获取、算法交易、回测引擎，实盘模拟，实盘交易到数据分析，为程序化交易者提供了全套解决方案。RQAlpha 具有灵活的配置方式，强大的扩展性，用户可以非常容易地定制专属于自己的程序化交易系统。
+RQAlpha 从数据获取、算法交易、回测引擎，实盘模拟，实盘交易到数据分析，为程序化交易者提供了全套解决方案。
+
+RQAlpha 具有灵活的配置方式，强大的扩展性，用户可以非常容易地定制专属于自己的程序化交易系统。
 
 RQAlpha 所有的策略都可以直接在 `Ricequant`_ 上进行回测和实盘模拟，并且可以通过微信和邮件实时推送您的交易信号。
 
@@ -37,12 +39,14 @@ RQAlpha 所有的策略都可以直接在 `Ricequant`_ 上进行回测和实盘�
 特点
 ============================
 
-*   易于使用: RQAlpha让您集中于策略的开发，一行简单的命令就可以执行您的策略。
-*   完善的文档: 您可以直接访问 `RQAlpha 文档`_ 或者 `Ricequant 文档`_ 来获取您需要的信息。
-*   活跃的社区: 您可以通过访问 `Ricequant 社区`_ 获取和询问有关 RQAlpha 的一切问题，有很多优秀的童鞋会解答您的问题。
-*   稳定的环境: 每天都有会大量的算法交易在 Ricequant 上运行，无论是 RQAlpha，还是数据，我们能会做到问题秒处理，秒解决。
-*   灵活的配置: RQAlpha 提供了一系列的配置选项，用户可以通过简单的配置来构建适合自己的交易系统。
-*   强大的扩展性: RQAlpha 定义了一系列的 Mod Hook 接口，开发者可以基于 Mod 的开发模式，扩展 RQAlpha，无论是做实时监控，还是归因分析，RQAlpha 都可以通过扩展来实现。
+======================    =================================================================================
+易于使用                    让您集中于策略的开发，一行简单的命令就可以执行您的策略。
+完善的文档                   您可以直接访问 `RQAlpha 文档`_ 或者 `Ricequant 文档`_ 来获取您需要的信息。
+活跃的社区                   您可以通过访问 `Ricequant 社区`_ 获取和询问有关 RQAlpha 的一切问题，有很多优秀的童鞋会解答您的问题。
+稳定的环境                   每天都有会大量的算法交易在 Ricequant 上运行，无论是 RQAlpha，还是数据，我们能会做到问题秒处理，秒解决。
+灵活的配置                   您可以使用多种方式来配置和运行策略，只需简单的配置就可以构建适合自己的交易系统。
+强大的扩展性                 开发者可以基于我们提供的 Mod Hook 接口来进行扩展。
+======================    =================================================================================
 
 快速指引
 ============================
@@ -55,13 +59,14 @@ RQAlpha 所有的策略都可以直接在 `Ricequant`_ 上进行回测和实盘�
 RQAlpha API
 ============================
 
-*   `参数配置`_ : 启动 RQAlpha 参数配置
 *   `API`_ : RQAlpha API 文档
 
 Mod
 ============================
 
-RQAlpha 提供了极具拓展性的 Mod Hook 接口，这意味着 RQAlpha 可以非常容易的对接其他量化库，安装和使用 Mod 也非常简单，当您安装好 RQAlpha 后，可以直接通过如下命令对管理您的Mod:
+RQAlpha 提供了极具拓展性的 Mod Hook 接口，这意味着开发者可以非常容易的对接第三方库。
+
+您可以通过如下方式使用 安装和使用Mod:
 
 ..  code-block:: bash
     
@@ -76,9 +81,11 @@ RQAlpha 提供了极具拓展性的 Mod Hook 接口，这意味着 RQAlpha 可�
     # 禁用 Mod
     $ rqalpha mod disable xxx
 
-======================    ==============================================================================================================
+以下是目前已经集成的 Mod 列表:
+
+======================    ==================================================================================
 Mod名                      说明
-======================    ==============================================================================================================
+======================    ==================================================================================
 `sys_analyser`_           【系统模块】记录每天的下单、成交、投资组合、持仓等信息，并计算风险度指标，并以csv、plot图标等形式输出分析结果
 `sys_funcat`_             【系统模块】支持以通达信公式的方式写策略
 `sys_progress`_           【系统模块】在控制台输出当前策略的回测进度。
@@ -89,25 +96,29 @@ Mod名                      说明
 `sentry`_                 【第三方模块】集成 sentry 的扩展，实现错误日志全自动采集、处理
 `tushare`_                【第三方模块】Demo Mod，用于展示如何通过tushare 获取实时Bar数据并组装以供RQAlpha使用
 `shipane`_                【第三方模块】集成实盘易SDK，用于对接股票实盘跟单交易
-======================    ==============================================================================================================
+======================    ==================================================================================
 
 如果您基于 RQAlpha 进行了 Mod 扩展，欢迎告知我们，在审核通过后，会在 Mod 列表中添加您的 Mod 信息和链接。
 
-机构版
+`专业级本地终端RQPro`_
 ============================
 
-..  image:: https://raw.githubusercontent.com/ricequant/rqalpha/master/docs/source/_static/rqalpha_plus.png
+..  image:: https://raw.githubusercontent.com/ricequant/rq-resource/master/rqalpha/RQPro.jpeg
 
-目前 RQAlpha 开源版仅开放了日级别的历史数据和日回测功能，如果您是机构用户，需要做算法交易亦或是量化研究，都可以联系我们的机构端产品销售获得机构端产品功能支持。「销售电话」：0755-33967716 「QQ」：4848371
+目前 RQAlpha 开源版仅开放了日级别的历史数据和日回测功能，如果您是机构用户，需要做算法交易亦或是量化研究，都可以联系我们的机构端产品销售获得机构端产品功能支持，也可通过 `RQPro`_ 登记试用。「销售电话」：0755-33967716 「QQ」：4848371
 
-机构端产品功能：
+RQPro产品功能：
 
-*   可以本地部署，使用pycharm、anaconda等工具做本地策略研发、模拟以及实盘交易，效率大大加强，本地管理自己的策略提高保密性
-*   极速调取经过清洗处理的历史数据接口服务，包括了：400多项指标的财务数据，股票、期货、ETF、LOF、分级基金等等10年+的日和分钟、tick级别的历史数据以及每日更新，股票、期货的实时数据支持，指数以及构成，板块分类，股本、换手率、融资融券等，天猫等电商销量数据，公募基金数据，舆情、公告类
-*   股票、期货的实盘交易订单管理系统以及实盘下单支持，从回测到实盘交易的一条龙系统以及服务支持
+RQPro由米筐旗下三大核心模块与五大拓展功能组成，其中核心模块有金融数据RQData、策略引擎RQAlpha、绩效分析RQBeta。
+
+..  image:: https://raw.githubusercontent.com/ricequant/rq-resource/master/rqalpha/rqpro_1.jpeg
+
+*   完全本地部署，使用pycharm、anaconda等工具做本地策略研发、模拟以及实盘交易，效率大大加强，本地管理自己的策略提高保密性
+*   多资产（股票、期货，公募基金等）的精准、快速回测（日，分钟，Tick）
 *   策略的管理以及实盘的收益、风险计算等
+*   可拓展接口及SDK方便二次开发
+*   绩效分析模块全面比较不同策略的收益、风险及稳定性
 *   交易数据的保存以及提取分析
-*   业绩分析和风险管理系统
 *   技术支持及定制化开发
 
 Feature Status
@@ -167,7 +178,6 @@ Feature Status
 
 关于RQAlpha的任何问题可以通过以下途径来获取帮助
 
-*  查看 `FAQ`_ 页面找寻常见问题及解答
 *  可以通过 `索引`_ 或者使用搜索功能来查找特定问题
 *  在 `Github Issue`_ 中提交issue
 *  RQAlpha 交流群「487188429」
@@ -180,13 +190,14 @@ Feature Status
 .. _Ricequant 社区: https://www.ricequant.com/community/category/all/
 .. _FAQ: http://rqalpha.readthedocs.io/zh_CN/latest/faq.html
 .. _索引: http://rqalpha.readthedocs.io/zh_CN/latest/genindex.html
+.. _RQPro: https://www.ricequant.com/rqpro_propaganda/?utm_source=github
+.. _专业级本地终端RQPro: https://www.ricequant.com/rqpro_propaganda/?utm_source=github
 
 .. _RQAlpha 介绍: http://rqalpha.readthedocs.io/zh_CN/latest/intro/overview.html
 .. _安装指南: http://rqalpha.readthedocs.io/zh_CN/latest/intro/install.html
 .. _10分钟学会 RQAlpha: http://rqalpha.readthedocs.io/zh_CN/latest/intro/tutorial.html
 .. _策略示例: http://rqalpha.readthedocs.io/zh_CN/latest/intro/examples.html
 
-.. _参数配置: http://rqalpha.readthedocs.io/zh_CN/latest/api/config.html
 .. _API: http://rqalpha.readthedocs.io/zh_CN/latest/api/base_api.html
 
 .. _如何贡献代码: http://rqalpha.readthedocs.io/zh_CN/latest/development/make_contribute.html
@@ -209,3 +220,4 @@ Feature Status
 .. _sentry: https://github.com/ricequant/rqalpha-mod-sentry
 .. _tushare: https://github.com/ricequant/rqalpha-mod-tushare
 .. _shipane: https://github.com/wh1100717/rqalpha-mod-ShiPanE
+

@@ -14,20 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import six
 import json
 import copy
 
-import six
-
-from ..events import EVENT, Event
-from ..environment import Environment
-from ..model.instrument import Instrument
+from rqalpha.events import EVENT, Event
+from rqalpha.environment import Environment
+from rqalpha.model.instrument import Instrument
 
 
 class StrategyUniverse(object):
     def __init__(self):
         self._set = set()
-        Environment.get_instance().event_bus.add_listener(EVENT.AFTER_TRADING, self._clear_de_listed)
+        Environment.get_instance().event_bus.prepend_listener(EVENT.AFTER_TRADING, self._clear_de_listed)
 
     def get_state(self):
         return json.dumps(sorted(self._set)).encode('utf-8')

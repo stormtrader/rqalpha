@@ -23,7 +23,7 @@
 
 *   选择刚刚创建好的虚拟机，点击启动。
 
-.. image:: ../_static/virtualBox_1.png
+.. image:: https://raw.githubusercontent.com/ricequant/rq-resource/master/rqalpha/virtualBox_1.png
 
 *   选中创建好的虚拟机，点击 "启动"
 
@@ -56,7 +56,7 @@
 
 .. code-block:: bash
 
-    rqalpha run -f ./rqalpha/examples/buy_and_hold.py -s 2016-06-01 -e 2016-12-01 --stock-starting-cash 100000 --benchmark 000300.XSHG --plot
+    rqalpha run -f ./rqalpha/examples/buy_and_hold.py -s 2016-06-01 -e 2016-12-01 --account stock 100000 --benchmark 000300.XSHG --plot
 
 使用 PyCharm 进行断点调试
 ------------------------------------------------------
@@ -69,4 +69,4 @@
 
 *   点击右边的小虫子图标，运行期间可点击代码行号的右侧增加断点，点击左下方的箭头图标控制代码运行。
 
-.. image:: ../_static/pycharm_1.png
+.. image:: https://raw.githubusercontent.com/ricequant/rq-resource/master/rqalpha/pycharm_1.png

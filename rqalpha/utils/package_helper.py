@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .logger import system_log
+from rqalpha.utils.logger import system_log
 
 
 def import_mod(mod_name):
@@ -22,8 +22,7 @@ def import_mod(mod_name):
         from importlib import import_module
         return import_module(mod_name)
     except Exception as e:
-        system_log.error("*" * 10)
-        system_log.error("Mod Import Error: ")
-        system_log.error(e)
-        system_log.error("*" * 10)
-        return None
+        system_log.error("*" * 30)
+        system_log.error("Mod Import Error: {}, error: {}", mod_name, e)
+        system_log.error("*" * 30)
+        raise
