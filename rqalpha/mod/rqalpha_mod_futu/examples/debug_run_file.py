@@ -46,6 +46,6 @@ config = {
     }
 }
 
-strategy_file_path = "./debug_strategy.py"
+strategy_file_path = "./golden_cross.py"
 
 run_file(strategy_file_path, config)

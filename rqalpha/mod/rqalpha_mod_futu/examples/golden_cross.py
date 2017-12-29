@@ -2,6 +2,7 @@
 
 import talib  # 请自行安装
 from rqalpha.api import *
+from rqalpha.utils.logger import user_log, system_log, basic_system_log
 
 
 # 在这个方法中编写任何的初始化逻辑。context对象将会在你的算法策略的任何方法之间做传递。
@@ -16,10 +17,9 @@ def init(context):
 # 你选择的证券的数据更新将会触发此段逻辑，例如日或分钟历史数据切片或者是实时数据切片更新
 def handle_bar(context, bar_dict):
     # 开始编写你的主要的算法逻辑
-
+    system_log.debug(bar_dict[context.s1].close)
     # bar_dict[order_book_id] 可以拿到某个证券的bar信息
     # context.portfolio 可以拿到现在的投资组合状态信息
-
     # 使用order_shares(id_or_ins, amount)方法进行落单
 
     # TODO: 开始编写你的算法吧！
@@ -28,7 +28,7 @@ def handle_bar(context, bar_dict):
     # 使用talib计算长短两根均线，均线以array的格式表达
     short_avg = talib.SMA(prices, context.SHORTPERIOD)
     long_avg = talib.SMA(prices, context.LONGPERIOD)
-
+    system_log.debug(bar_dict[context.s1].close)
     plot("short avg", short_avg[-1])
     plot("long avg", long_avg[-1])
 
@@ -46,3 +46,5 @@ def handle_bar(context, bar_dict):
     if (short_avg[-1] - long_avg[-1] > 0) and (short_avg[-2] - long_avg[-2] < 0):
         # 满仓入股
         order_shares(context.s1, shares)
+    system_log.debug(bar_dict[context.s1].close)
+

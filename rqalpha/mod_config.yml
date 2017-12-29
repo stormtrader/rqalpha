@@ -20,3 +20,5 @@ mod:
   # 接收实时行情运行
   sys_stock_realtime:
     enabled: false
+  futu:
+    enabled: false

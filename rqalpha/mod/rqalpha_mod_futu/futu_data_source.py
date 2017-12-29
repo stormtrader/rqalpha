@@ -29,6 +29,7 @@ from datetime import date, timedelta, datetime
 import pandas as pd
 import time
 import six
+from rqalpha.utils.logger import system_log
 
 RET_OK = 0
 RET_ERROR = -1
@@ -198,6 +199,7 @@ class FUTUDataSource(AbstractDataSource):
 
         :return: `numpy.ndarray` | `dict`
         """
+        system_log.debug("ssssss")
         if frequency == '1d':
             return self.get_bar_day(instrument, dt)
         elif frequency == '1m':
@@ -238,7 +240,7 @@ class FUTUDataSource(AbstractDataSource):
 
         current_time = time.strftime("%Y%m%d", time.localtime())
         dt_time = dt.strftime("%Y%m%d")
-
+        system_log.debug("order_book_id6 " + str(self._dt))
         if dt_time == current_time:  # 判断时间是否是当天，每天都是要清空缓存，所以要先获取历史
             if self._cache['history_kline'] is None or instrument.order_book_id not in self._cache[
                 'history_kline'].keys():
@@ -254,7 +256,7 @@ class FUTUDataSource(AbstractDataSource):
 
         if ret_code == RET_ERROR or bar_data is None:
             raise Exception("can't get bar data")
-
+        system_log.debug("order_book_id5 , dt=" + str(self._dt))
         ret_dict = bar_data[bar_data.datetime <= int(dt_time + "000000")].iloc[0].to_dict()
 
         return ret_dict
@@ -365,6 +367,7 @@ class FUTUDataSource(AbstractDataSource):
                 instrument.order_book_id].append(bar_data)
         return ret_code, self._cache['history_minute_kline'][instrument.order_book_id]
 
+    @lru_cache(None)
     def _get_history_cache(self, instrument):
         end_date = date.today().replace(month=12, day=31)
         last_year = timedelta(days=365)
@@ -375,10 +378,12 @@ class FUTUDataSource(AbstractDataSource):
         while bar_data is not None:
             begin_date = end_date - last_year
             for i in range(3):
+                system_log.debug("order_book_id3=" + order_book_id + ", dt=" + str(self._dt))
                 ret_code, bar_data = self._quote_context.get_history_kline(instrument.order_book_id,
                                                                            start=begin_date.strftime('%Y-%m-%d'),
                                                                            end=end_date.strftime('%Y-%m-%d'),
                                                                            ktype='K_DAY')
+                system_log.debug("order_book_id4=" + order_book_id + ", dt=" + str(self._dt))
                 if ret_code != RET_ERROR:
                     break
                 else:

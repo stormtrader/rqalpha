@@ -46,7 +46,7 @@ def after_trading(context):
 # 你选择的证券的数据更新将会触发此段逻辑，例如日或分钟历史数据切片或者是实时数据切片更新
 def handle_bar(context, bar_dict):
     # 开始编写你的主要的算法逻辑
-
+    print("handle bar  ... ")
     # bar_dict[order_book_id] 可以拿到某个证券的bar信息
     # context.portfolio 可以拿到现在的投资组合状态信息
 
