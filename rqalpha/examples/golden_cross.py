@@ -1,5 +1,5 @@
 from rqalpha.api import *
-
+from rqalpha.utils.logger import system_log
 import talib
 
 
@@ -36,6 +36,7 @@ def handle_bar(context, bar_dict):
     cur_position = context.portfolio.positions[context.s1].quantity
     # 计算现在portfolio中的现金可以购买多少股票
     shares = context.portfolio.cash / bar_dict[context.s1].close
+
 
     # 如果短均线从上往下跌破长均线，也就是在目前的bar短线平均值低于长线平均值，而上一个bar的短线平均值高于长线平均值
     if short_avg[-1] - long_avg[-1] < 0 and short_avg[-2] - long_avg[-2] > 0 and cur_position > 0:

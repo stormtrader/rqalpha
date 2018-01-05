@@ -339,9 +339,9 @@ class BarMap(object):
             return self._cache[order_book_id]
         except KeyError:
             try:
-                system_log.debug("order_book_id1=" + order_book_id + ", dt=" + str(self._dt))
+                #system_log.debug("order_book_id1=" + order_book_id + ", dt=" + str(self._dt))
                 bar = self._data_proxy.get_bar(order_book_id, self._dt, self._frequency)
-                system_log.debug("order_book_id2=" + order_book_id + ", dt=" + str(self._dt))
+                #system_log.debug("order_book_id2=" + order_book_id + ", dt=" + str(self._dt))
             except Exception as e:
                 system_log.exception(e)
                 raise patch_user_exc(KeyError(_(u"id_or_symbols {} does not exist").format(key)))
